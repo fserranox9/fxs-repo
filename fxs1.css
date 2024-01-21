@@ -1,4 +1,4 @@
-<style>* {
+* {
     box-sizing: border-box
 }
 
@@ -8,10 +8,10 @@ body {
 
 /* Style the tab */
 .tab {
-    float: left;
+    float: center;
     border: 1px solid #ccc;
     background-color: #f1f1f1;
-    width: 30%;
+    /*width: 30%; */
     height: 300px;
 }
 
@@ -56,5 +56,3 @@ body {
     clear: both;
     display: table;
 }
-
-</style>
