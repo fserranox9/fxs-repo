@@ -1,7 +1,9 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
+    <title>FidelSerrano</title>
+    <link rel="icon" src="../assets/alien.png">
     <script src="fxs1.js"></script>
     <link rel="stylesheet" href="fxs1.css">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -9,14 +11,25 @@
 
 <body>
 
+    <div class="tab">
+        <div class="EduLink">
+            <img src="../assets/graduation-hat.png">
+            <button onmouseover="openTab(event, 'Education')">Education</button>
+        </div>
+    </div>
+
+
+
+
+
     <h2>Hover Tabs</h2>
     <p>Move the mouse over a button inside the tabbed menu:</p>
 
     <div class="tab">
         <img src="../assets/graduation-hat.png">
-        <button class="tablinks" onmouseover="openCity(event, 'London')">London</button>
-        <button class="tablinks" onmouseover="openCity(event, 'Paris')">Paris</button>
-        <button class="tablinks" onmouseover="openCity(event, 'Tokyo')">Tokyo</button>
+        <button class="tablinks" onmouseover="openTab(event, 'London')">London</button>
+        <button class="tablinks" onmouseover="openTab(event, 'Paris')">Paris</button>
+        <button class="tablinks" onmouseover="openTab(event, 'Tokyo')">Tokyo</button>
     </div>
 
     <div id="London" class="tabcontent">
