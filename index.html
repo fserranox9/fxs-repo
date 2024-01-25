@@ -1,42 +1,210 @@
+
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
-    <title>FidelSerrano</title>
-    <link rel="icon" type="image/png" href="../assets/aliens.png" sizes="16x16">
-    <script src="fxs1.js"></script>
-    <link rel="stylesheet" href="fxs1.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-</head>
+  <head>
+      <meta charset="UTF-8" />
+      <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <title>Employer Pool Summary</title>
+      <link rel="icon" href="https://localhost:3000/assets/tabicon.png">
+    <!-- Office JavaScript API -->
+      <script type="text/javascript" src="https://appsforoffice.microsoft.com/lib/1.1/hosted/office.js"></script>
+    <!-- Template styles -->
+      <link href="taskpane.css" rel="stylesheet" type="text/css" />
+  </head>
 
-<body>
+  <body>
+      <main>
 
-    <header>
-    </header>
-
-
-    <div class="leftTab">
-        <div id="EduLink">
-            <img src="../assets/graduation-hat.png" alt="Education Icon" width="100" height="100">
-
-        </div>
-        <div id="WrkLink">
-            <img src="../assets/office-chair.png" alt="Work Icon" width="100" height="100">
-
-        </div>
-        <div id="PojLink">
-            <img src="../assets/presentation.png" alt="Project Icon" width="100" height="100">
-
-        </div>
-        <div id="SchoolWLink">
-            <img src="../assets/office-supplies.png" alt="School Work Icon" width="100" height="100">
-
+        <div class="header">
+          <img src="https://localhost:3000/assets/ACTO-Logo.png" alt="" width="175" height="175">
+          <h3 id="idCurrERname"> EmployerName </h3> <!-- The ER name corresponding to the current selected VRP in the WB-->
+          <h3 id="idCurrVY"> MM/DD/YYYY </h3> <!-- The Valuation Year in the WB-->
         </div>
 
-    </div>
+        <div class="toptab">
+          <button class="tablinks" onclick="openTab(event, 'Sensitivity-tab')">Sensitivity</button>
+          <button class="tablinks" onclick="openTab(event, 'Projections-tab')">Projections</button>
+          <button class="tablinks" onclick="openTab(event, 'UAL-tab')">UAL</button>
+        </div>
+
+        <div class="content">
+
+          <div id="Sensitivity-tab" class="tabcontent">
+
+            <h2>Rate Plan Sensitivity</h2>
+            <div class="TableSum">
+              <table id="TblSensitivity">
+                <tr><td colspan="2"> Val Rate Plan Identifier:</td></tr>
+                <tr><td colspan="2"> Val Rate Plan Name:</td></tr>
+                <tr><td rowspan="12">Discount Rate Sensitivity 	&plusmn; 1</td><td>Low Scenario Total NC @ 5.8%</td></tr>
+                <tr><td>Low Scenario AL @ 5.8%</td></tr>
+                <tr><td>Low Scenario UAL @ 5.8%</td></tr>
+                <tr><td>Low Scenario Funded Ratio (MVA / AL) @ 5.8%</td></tr>
+                <tr><td>Baseline Scenario Total NC @ 6.8%</td></tr>
+                <tr><td>Baseline Scenario AL @ 6.8%</td></tr>
+                <tr><td>Baseline Scenario UAL @ 6.8%</td></tr>
+                <tr><td>Baseline Scenario Funded Ratio (MVA / AL) @ 6.8%</td></tr>
+                <tr><td>High Scenario Total NC @ 7.8%</td></tr>
+                <tr><td>High Scenario AL @ 7.8%</td></tr>
+                <tr><td>High Scenario UAL @ 7.8%</td></tr>
+                <tr><td>High Scenario Funded Ratio (MVA / AL) @ 7.8%</td></tr>
+                <tr><td rowspan="12">Inflation Last Annual &plusmn; 1</td><td>Low Scenario Total NC @ 1.3%</td></tr>
+                <tr><td>Low Scenario AL @ 1.3%</td></tr>
+                <tr><td>Low Scenario UAL @ 1.3%</td></tr>
+                <tr><td>Low Scenario Funded Ratio (MVA / AL) @ 1.3%</td></tr>
+                <tr><td>Baseline Scenario Total NC @ 2.3%</td></tr>
+                <tr><td>Baseline Scenario AL @ 2.3%</td></tr>
+                <tr><td>Baseline Scenario UAL @ 2.3%</td></tr>
+                <tr><td>Baseline Scenario Funded Ratio (MVA / AL) @ 2.3%</td></tr>
+                <tr><td>High Scenario Total NC @ 3.3%</td></tr>
+                <tr><td>High Scenario AL @ 3.3%</td></tr>
+                <tr><td>High Scenario UAL @ 3.3%</td></tr>
+                <tr><td>High Scenario Funded Ratio (MVA / AL) @ 3.3%</td></tr>
+                <tr><td rowspan="12">Mortality Sensitivity &plusmn; 10%</td><td>Low Scenario Total NC</td></tr>
+                <tr><td>Low Scenario AL</td></tr>
+                <tr><td>Low Scenario UAL</td></tr>
+                <tr><td>Low Scenario Funded Ratio (MVA / AL)</td></tr>
+                <tr><td>Baseline Scenario Total NC</td></tr>
+                <tr><td>Baseline Scenario AL</td></tr>
+                <tr><td>Baseline Scenario UAL</td></tr>
+                <tr><td>Baseline Scenario Funded Ratio (MVA / AL)</td></tr>
+                <tr><td>High Scenario Total NC</td></tr>
+                <tr><td>High Scenario AL</td></tr>
+                <tr><td>High Scenario UAL</td></tr>
+                <tr><td>High Scenario Funded Ratio (MVA / AL)</td></tr>
+              </table>
+            </div>
+
+          <h2>Maturity Measures </h2>
+            <div class="TableSum">
+              <table id="TblMatuarityMeas">
+                <tr>
+                  <th>Rate Plan Name</th>
+                  <th>Val Rate Plan Id</th>
+                  <th>Retiree AL to Total AL Ratio</th>
+                  <th>Active to Unique Retiree Ratio</th>
+                  <th>Active Count</th>
+                  <th>Retiree Count</th>
+                  <th>Unique Retiree Count</th>
+                  <th>Retiree AL</th>
+                  <th>Total AL</th>
+                </tr>
+                <tr> <!-- Temp row will need to be removed -->
+                  <td>PEPRA Miscellaneous Plan</td>
+                  <td>27513</td>
+                  <td>0.00</td>
+                  <td>0.00</td>
+                  <td>N/A</td>
+                  <td>4</td>
+                  <td>0</td>
+                  <td></td>
+                  <td>28,294</td>
+                </tr>
+                <tr> <!-- Temp row will need to be removed -->
+                  <td>Miscellaneous Plan</td>
+                  <td>32714</td>
+                  <td>0</td>
+                  <td>N/A</td>
+                  <td>1</td>
+                  <td>0</td>
+                  <td>0</td>
+                  <td></td>
+                  <td>9,463</td>
+                </tr>
+                <tr> <!-- can also use tfoot -->
+                  <td colspan="2">Employer Total:</td> 
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                </tr>
+              </table>
+            </div>
+          </div>
+
+          <div id="Projections-tab" class="tabcontent">
+
+            <h2>Projections</h2>
+            <div class="TableSum">
+              <table id="TblProjections">
+                <tr>
+                  <th>Rate Plan Name</th>
+                  <th>Val Rate Plan Id</th>
+                  <th>Payroll Read in 6/30</th>
+                  <th>Projected Payroll for Contribution Year</th>
+                  <th>ER Normal Cost %</th>
+                  <th>ER Normal Cost $</th>
+                  <th>Required Payment on UAL Bases</th>
+                </tr>
+                <tr> <!-- Temp row will need to be removed -->
+                  <td>PEPRA Miscellaneous Plan</td>
+                  <td>27513</td>
+                  <td>373,147</td>
+                  <td>441,001</td>
+                  <td>7.87%</td>
+                  <td>34,707</td>
+                  <td>1,119</td>
+                </tr>
+                <tr> <!-- Temp row will need to be removed -->
+                  <td>Miscellaneous Plan</td>
+                  <td>32714</td>
+                  <td>62,776</td>
+                  <td>54,284</td>
+                  <td>14.13%</td>
+                  <td>7,670</td>
+                  <td>374</td>
+                </tr>
+                <tr> <!-- can also use tfoot -->
+                  <td colspan="2">Employer Total:</td> 
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                </tr>
+              </table>
+            </div>
+          </div>
+
+          <div id="UAL-tab" class="tabcontent">
+            <h2>Unfunded Accrued Liability</h2>
+          </div>
+
+        </div>
+
+      </main>
+
+  </body>
 
 
-    </div>
-</body>
+
+
+  <!-- Need to move this to Ian's JS external file or we can leave here? -->
+  <script>
+    function openTab(evt, TabName) {
+        var i, tabcontent, tablinks;
+        tabcontent = document.getElementsByClassName("tabcontent");
+
+        for (i = 0; i < tabcontent.length; i++) {
+          tabcontent[i].style.display = "none";
+        }
+        tablinks = document.getElementsByClassName("tablinks");
+        for (i = 0; i < tablinks.length; i++) 
+        {
+          tablinks[i].className = tablinks[i].className.replace(" active", "");
+        }
+        document.getElementById(TabName).style.display = "block";
+        evt.currentTarget.className += " active";
+      }
+
+  </script>
+
+
 
 </html>
+
