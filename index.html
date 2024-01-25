@@ -38,42 +38,32 @@
               <table id="TblSensitivity">
                 <tr><td colspan="2"> Val Rate Plan Identifier:</td></tr>
                 <tr><td colspan="2"> Val Rate Plan Name:</td></tr>
-                <tr><td rowspan="12">Discount Rate Sensitivity 	&plusmn; 1</td><td>Low Scenario Total NC @ 5.8%</td></tr>
-                <tr><td>Low Scenario AL @ 5.8%</td></tr>
-                <tr><td>Low Scenario UAL @ 5.8%</td></tr>
-                <tr><td>Low Scenario Funded Ratio (MVA / AL) @ 5.8%</td></tr>
-                <tr><td>Baseline Scenario Total NC @ 6.8%</td></tr>
-                <tr><td>Baseline Scenario AL @ 6.8%</td></tr>
-                <tr><td>Baseline Scenario UAL @ 6.8%</td></tr>
-                <tr><td>Baseline Scenario Funded Ratio (MVA / AL) @ 6.8%</td></tr>
-                <tr><td>High Scenario Total NC @ 7.8%</td></tr>
-                <tr><td>High Scenario AL @ 7.8%</td></tr>
-                <tr><td>High Scenario UAL @ 7.8%</td></tr>
-                <tr><td>High Scenario Funded Ratio (MVA / AL) @ 7.8%</td></tr>
-                <tr><td rowspan="12">Inflation Last Annual &plusmn; 1</td><td>Low Scenario Total NC @ 1.3%</td></tr>
-                <tr><td>Low Scenario AL @ 1.3%</td></tr>
-                <tr><td>Low Scenario UAL @ 1.3%</td></tr>
-                <tr><td>Low Scenario Funded Ratio (MVA / AL) @ 1.3%</td></tr>
-                <tr><td>Baseline Scenario Total NC @ 2.3%</td></tr>
-                <tr><td>Baseline Scenario AL @ 2.3%</td></tr>
-                <tr><td>Baseline Scenario UAL @ 2.3%</td></tr>
-                <tr><td>Baseline Scenario Funded Ratio (MVA / AL) @ 2.3%</td></tr>
-                <tr><td>High Scenario Total NC @ 3.3%</td></tr>
-                <tr><td>High Scenario AL @ 3.3%</td></tr>
-                <tr><td>High Scenario UAL @ 3.3%</td></tr>
-                <tr><td>High Scenario Funded Ratio (MVA / AL) @ 3.3%</td></tr>
-                <tr><td rowspan="12">Mortality Sensitivity &plusmn; 10%</td><td>Low Scenario Total NC</td></tr>
-                <tr><td>Low Scenario AL</td></tr>
-                <tr><td>Low Scenario UAL</td></tr>
-                <tr><td>Low Scenario Funded Ratio (MVA / AL)</td></tr>
-                <tr><td>Baseline Scenario Total NC</td></tr>
-                <tr><td>Baseline Scenario AL</td></tr>
-                <tr><td>Baseline Scenario UAL</td></tr>
-                <tr><td>Baseline Scenario Funded Ratio (MVA / AL)</td></tr>
-                <tr><td>High Scenario Total NC</td></tr>
-                <tr><td>High Scenario AL</td></tr>
-                <tr><td>High Scenario UAL</td></tr>
-                <tr><td>High Scenario Funded Ratio (MVA / AL)</td></tr>
+                <tr><td colspan="2" class="op"> </td></tr>
+                <tr>
+                  <td rowspan="12">
+
+                    <label>Sensitivity Selection</label>
+                    <br>
+                    <select name="sensit-select" id="s1" aria-label="Sensitivity Selection" onchange="selOpt()">
+                      <option value=" Discount Rate Sensitivity 	&plusmn; 1  @ 5.8%">Discount Rate Sensitivity 	&plusmn; 1</option>
+                      <option value="Inflation Last Annual &plusmn; 1  @ 2.3%">Inflation Last Annual &plusmn; 1</option>
+                      <option value="Mortality Sensitivity &plusmn; 10% ">Mortality Sensitivity &plusmn; 10%</option>
+                   </select>
+
+
+                  </td><td>Low Scenario Total NC </td></tr>
+                <tr><td>Low Scenario AL </td></tr>
+                <tr><td>Low Scenario UAL </td></tr>
+                <tr><td>Low Scenario Funded Ratio (MVA / AL) </td></tr>
+                <tr><td>Baseline Scenario Total NC </td></tr>
+                <tr><td>Baseline Scenario AL </td></tr>
+                <tr><td>Baseline Scenario UAL </td></tr>
+                <tr><td>Baseline Scenario Funded Ratio (MVA / AL) </td></tr>
+                <tr><td>High Scenario Total NC </td></tr>
+                <tr><td>High Scenario AL </td></tr>
+                <tr><td>High Scenario UAL </td></tr>
+                <tr><td>High Scenario Funded Ratio (MVA / AL) </td></tr>
+               
               </table>
             </div>
 
@@ -202,6 +192,12 @@
         evt.currentTarget.className += " active";
       }
 
+      function selOpt() {
+         selEl = document.querySelector('#s1');
+         op = selEl.value;
+         document.querySelector('.op').textContent = op;
+      }
+    
   </script>
 
 
