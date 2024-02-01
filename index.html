@@ -2,179 +2,245 @@
 <!DOCTYPE html>
 <html lang="en">
 
-  <head>
-      <meta charset="UTF-8" />
-      <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-      <meta name="viewport" content="width=device-width, initial-scale=1">
-      <title>Employer Pool Summary</title>
-      <link rel="icon" href="../assets/tabicon.png">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Employer Pool Summary</title>
+    <link rel="icon" href="/assets/tabicon.png">
     <!-- Office JavaScript API -->
-      <script type="text/javascript" src="https://appsforoffice.microsoft.com/lib/1.1/hosted/office.js"></script>
-    <!-- Template styles -->
-      <link href="taskpane.css" rel="stylesheet" type="text/css" />
-  </head>
+    <script type="text/javascript" src="https://appsforoffice.microsoft.com/lib/1.1/hosted/office.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
+    <!-- style sheets -->
+    <link rel="stylesheet" href="https://static2.sharepointonline.com/files/fabric/office-ui-fabric-core/11.0.0/css/fabric.min.css"/>
+    <link href="taskpane.css" rel="stylesheet" type="text/css" />
+</head>
 
-  <body>
-      <main>
+<body>
+    <main>
 
         <div class="header">
-          <img src="../assets/ACTO-Logo.png" alt="" width="175" height="175">
-          <h3 id="idCurrERname"> EmployerName </h3> <!-- The ER name corresponding to the current selected VRP in the WB-->
-          <h3 id="idCurrVY"> MM/DD/YYYY </h3> <!-- The Valuation Year in the WB-->
+            <img src="/assets/ACTO-Logo.png" alt="" width="175" height="175">
+            <h3 id = "idERname"> South San Joaquin County Fire Authority  </h3>
+            <h4 id = "idERcid">CalPERS ID: 6329264604</h4>
+            <h4 id = "idVY">Valuation Year: 06/30/2023</h4>
         </div>
 
         <div class="toptab">
-          <button class="tablinks" onclick="openTab(event, 'Sensitivity-tab')">Sensitivity</button>
-          <button class="tablinks" onclick="openTab(event, 'Projections-tab')">Projections</button>
-          <button class="tablinks" onclick="openTab(event, 'UAL-tab')">UAL</button>
+            <button class="tablinks" onclick="openTab(event, 'Sensitivity-tab')">
+                <img src="/assets/sensitivityIcon.png" alt="" width="25" height="25">
+                Sensitivity Analysis
+            </button>
+            <button class="tablinks" onclick="openTab(event, 'Projections-tab')">
+                <img src="/assets/projectionIcon.png" alt="" width="25" height="25">
+                Projected Contributions
+            </button>
+            <button class="tablinks" onclick="openTab(event, 'UAL-tab')">
+                <img src="/assets/ualIcon.png" alt="" width="25" height="25">
+                Unfunded Accrued Liability
+            </button>
         </div>
 
         <div class="content">
 
-          <div id="Sensitivity-tab" class="tabcontent">
+            <div id="Sensitivity-tab" class="tabcontent">
 
-            <h2>Rate Plan Sensitivity</h2>
-            <div class="TableSum">
-              <table id="TblSensitivity">
-                <tr><td colspan="2"> Val Rate Plan Identifier:</td></tr>
-                <tr><td colspan="2"> Val Rate Plan Name:</td></tr>
-                <tr><td colspan="2" class="op"> </td></tr>
-                <tr>
-                  <td rowspan="12">
+                <h3>Rate Plan Sensitivity</h3>
+                <table id="idTblSensitivity">
+                    <thead>
+                        <tr>
+                            <th colspan="2"></th>
+                            <th colspan="4">Low Scenario</th>
+                            <th colspan="4">Baseline Scenario</th>
+                            <th colspan="4">High Scenario</th>
+                        </tr>
+                        <tr>
+                            <th>Rate Plan Name</th>
+                            <th>Val Rate Plan Id</th>
+                            <th>Total NC</th>
+                            <th>AL</th>
+                            <th>UAL</th>
+                            <th>Funded Ratio (MVA / AL)</th>
+                            <th>Total NC</th>
+                            <th>AL</th>
+                            <th>UAL</th>
+                            <th>Funded Ratio (MVA / AL)</th>
+                            <th>Total NC</th>
+                            <th>AL</th>
+                            <th>UAL</th>
+                            <th>Funded Ratio (MVA / AL)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr> <!-- Temp. wil delete-->
+                            <td>Miscellaneous Plan</td>
+                            <td>32715</td>
+                            <td> 23.67% </td>
+                            <td> 24,517 </td>
+                            <td> 6,930 </td>
+                            <td> 71.7%</td>
+                            <td> 18.81% </td>
+                            <td> 20,634 </td>
+                            <td> 3,047 </td>
+                            <td> 85.2% </td>
+                            <td> 15.11% </td>
+                            <td> 17,528 </td>
+                            <td> -59 </td>
+                            <td> 100.3%</td>                
+                          </tr>
+                          <tr> <!-- Temp. wil delete-->
+                            <td>PEPRA Miscellaneous Plan</td>
+                            <td>27513</td>
+                            <td> 12.67% </td>
+                            <td> 100,517 </td>
+                            <td> 89,333 </td>
+                            <td> 89.8%</td>
+                            <td> 1.51% </td>
+                            <td> 48,223 </td>
+                            <td> 6,568 </td>
+                            <td> 92.2% </td>
+                            <td> 11.88% </td>
+                            <td> 93,558 </td>
+                            <td> 1,203 </td>
+                            <td> 103.8%</td>                
+                          </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="2">Employer Total:</td> 
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                          </tr>
+                    </tfoot>
 
-                    <label>Sensitivity Selection</label>
-                    <br>
-                    <select name="sensit-select" id="s1" aria-label="Sensitivity Selection" onchange="selOpt()">
-                      <option value=" Discount Rate Sensitivity 	&plusmn; 1  BaseLine @ 6.8%">Discount Rate Sensitivity 	&plusmn; 1</option>
-                      <option value="Inflation Last Annual &plusmn; 1  BaseLine @ 2.3%">Inflation Last Annual &plusmn; 1</option>
-                      <option value="Mortality Sensitivity &plusmn; 10% ">Mortality Sensitivity &plusmn; 10%</option>
-                   </select>
-
-
-                  </td><td>Low Scenario Total NC </td></tr>
-                <tr><td>Low Scenario AL </td></tr>
-                <tr><td>Low Scenario UAL </td></tr>
-                <tr><td>Low Scenario Funded Ratio (MVA / AL) </td></tr>
-                <tr><td>Baseline Scenario Total NC </td></tr>
-                <tr><td>Baseline Scenario AL </td></tr>
-                <tr><td>Baseline Scenario UAL </td></tr>
-                <tr><td>Baseline Scenario Funded Ratio (MVA / AL) </td></tr>
-                <tr><td>High Scenario Total NC </td></tr>
-                <tr><td>High Scenario AL </td></tr>
-                <tr><td>High Scenario UAL </td></tr>
-                <tr><td>High Scenario Funded Ratio (MVA / AL) </td></tr>
-               
-              </table>
+                </table>
+                <h3>Maturity Measures</h3>
+                <table id="idTblmaturityMeasures">
+                    <thead>
+                        <tr>
+                            <th>Rate Plan Name</th>
+                            <th>Val Rate Plan Id</th>
+                            <th>Retiree AL to Total AL Ratio</th>
+                            <th>Active to Unique Retiree Ratio</th>
+                            <th>Active Count</th>
+                            <th>Retiree Count</th>
+                            <th>Unique Retiree Count</th>
+                            <th>Retiree AL</th>
+                            <th>Total AL</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr> <!-- Temp row will need to be removed -->
+                            <td>PEPRA Miscellaneous Plan</td>
+                            <td>27513</td>
+                            <td>0.00</td>
+                            <td>0.00</td>
+                            <td>N/A</td>
+                            <td>4</td>
+                            <td>0</td>
+                            <td></td>
+                            <td>28,294</td>
+                        </tr>
+                        <tr> <!-- Temp row will need to be removed -->
+                            <td>Miscellaneous Plan</td>
+                            <td>32714</td>
+                            <td>0</td>
+                            <td>N/A</td>
+                            <td>1</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td></td>
+                            <td>9,463</td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr> 
+                            <td colspan="2">Employer Total:</td> 
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                    </tfoot>
+                </table>
             </div>
 
-          <h2>Maturity Measures </h2>
-            <div class="TableSum">
-              <table id="TblMatuarityMeas">
-                <tr>
-                  <th>Rate Plan Name</th>
-                  <th>Val Rate Plan Id</th>
-                  <th>Retiree AL to Total AL Ratio</th>
-                  <th>Active to Unique Retiree Ratio</th>
-                  <th>Active Count</th>
-                  <th>Retiree Count</th>
-                  <th>Unique Retiree Count</th>
-                  <th>Retiree AL</th>
-                  <th>Total AL</th>
-                </tr>
-                <tr> <!-- Temp row will need to be removed -->
-                  <td>PEPRA Miscellaneous Plan</td>
-                  <td>27513</td>
-                  <td>0.00</td>
-                  <td>0.00</td>
-                  <td>N/A</td>
-                  <td>4</td>
-                  <td>0</td>
-                  <td></td>
-                  <td>28,294</td>
-                </tr>
-                <tr> <!-- Temp row will need to be removed -->
-                  <td>Miscellaneous Plan</td>
-                  <td>32714</td>
-                  <td>0</td>
-                  <td>N/A</td>
-                  <td>1</td>
-                  <td>0</td>
-                  <td>0</td>
-                  <td></td>
-                  <td>9,463</td>
-                </tr>
-                <tr> <!-- can also use tfoot -->
-                  <td colspan="2">Employer Total:</td> 
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                </tr>
-              </table>
+            <div id="Projections-tab" class="tabcontent">
+                <h3>Projections</h3>
+                <table id="idTblprojections">
+                    <thead>
+                        <tr>
+                            <th>Rate Plan Name</th>
+                            <th>Val Rate Plan Id</th>
+                            <th>Payroll Read in 6/30</th>
+                            <th>Projected Payroll for Contribution Year</th>
+                            <th>ER Normal Cost %</th>
+                            <th>ER Normal Cost $</th>
+                            <th>Required Payment on UAL Bases</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr> <!-- Temp row will need to be removed -->
+                            <td>PEPRA Miscellaneous Plan</td>
+                            <td>27513</td>
+                            <td>373,147</td>
+                            <td>441,001</td>
+                            <td>7.87%</td>
+                            <td>34,707</td>
+                            <td>1,119</td>
+                        </tr>
+                        <tr> <!-- Temp row will need to be removed -->
+                            <td>Miscellaneous Plan</td>
+                            <td>32714</td>
+                            <td>62,776</td>
+                            <td>54,284</td>
+                            <td>14.13%</td>
+                            <td>7,670</td>
+                            <td>374</td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr> 
+                            <td colspan="2">Employer Total:</td> 
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                    </tfoot>
+                </table>
             </div>
-          </div>
-
-          <div id="Projections-tab" class="tabcontent">
-
-            <h2>Projections</h2>
-            <div class="TableSum">
-              <table id="TblProjections">
-                <tr>
-                  <th>Rate Plan Name</th>
-                  <th>Val Rate Plan Id</th>
-                  <th>Payroll Read in 6/30</th>
-                  <th>Projected Payroll for Contribution Year</th>
-                  <th>ER Normal Cost %</th>
-                  <th>ER Normal Cost $</th>
-                  <th>Required Payment on UAL Bases</th>
-                </tr>
-                <tr> <!-- Temp row will need to be removed -->
-                  <td>PEPRA Miscellaneous Plan</td>
-                  <td>27513</td>
-                  <td>373,147</td>
-                  <td>441,001</td>
-                  <td>7.87%</td>
-                  <td>34,707</td>
-                  <td>1,119</td>
-                </tr>
-                <tr> <!-- Temp row will need to be removed -->
-                  <td>Miscellaneous Plan</td>
-                  <td>32714</td>
-                  <td>62,776</td>
-                  <td>54,284</td>
-                  <td>14.13%</td>
-                  <td>7,670</td>
-                  <td>374</td>
-                </tr>
-                <tr> <!-- can also use tfoot -->
-                  <td colspan="2">Employer Total:</td> 
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                </tr>
-              </table>
+    
+            <div id="UAL-tab" class="tabcontent">
+                <h2>Unfunded Accrued Liability</h2>
+                <canvas id="myChart"></canvas>
             </div>
-          </div>
-
-          <div id="UAL-tab" class="tabcontent">
-            <h2>Unfunded Accrued Liability</h2>
-          </div>
-
         </div>
 
-      </main>
+        <div class="footer">
+            © 2024 ACTO CalPERS Excel Add-in x Technology Team
+        </div>
 
-  </body>
+    </main>
+</body>
 
 
 
 
-  <!-- Need to move this to Ian's JS external file or we can leave here? -->
   <script>
     function openTab(evt, TabName) {
         var i, tabcontent, tablinks;
@@ -189,18 +255,46 @@
           tablinks[i].className = tablinks[i].className.replace(" active", "");
         }
         document.getElementById(TabName).style.display = "block";
+        
         evt.currentTarget.className += " active";
       }
 
-      function selOpt() {
-         selEl = document.querySelector('#s1');
-         op = selEl.value;
-         document.querySelector('.op').textContent = op;
-      }
+    const xValues = [2024,2025,2026,2027,2028,2029,2030,2031,2032];
+
+new Chart("myChart", {
+  type: "line",
+  data: {
+    labels: xValues,
+    datasets: [{ 
+      label: "VRP 32715",
+      data: [3475,2868,2220,1528,789,0,0,0,0],
+      borderColor: "red",
+      fill: false
+    }, { 
+      label: "VRP 27513",
+      data: [4765,3933,3045,2096,1082,0,0,0,0],
+      borderColor: "green",
+      fill: false
+    }]
+  },
+  options: {
+    legend: {display: true, position: 'left'}
     
+    
+  }
+});
+
   </script>
 
 
 
-</html>
 
+
+
+
+
+
+
+
+
+</html>
