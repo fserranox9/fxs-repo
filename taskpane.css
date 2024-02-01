@@ -1,36 +1,40 @@
 
-html,
-body {
-  margin: 0;
-  background-color:whitesmoke;
-  padding: 2px 2px;
+html, body {
+    background-color:dimgray;
+    color:black;
+    padding: 0.5px;
+    font-family: "Lucida Console", "Courier New", monospace;
 }
 
-/* Top header */
+.header{
+    padding: 5px;
+    background-color:lightgrey;
+    align-items: right;
+    border-bottom: 1px dotted black;
+    text-align: left;
+}
 
-  .header{
-    padding: 1px 1px;
-    background-color:aliceblue;
-    display: flex;
-    align-items: center;
-    border-bottom: 1px dotted #ccc;
-  }
-
-  #idCurrVY{
+.header img{
     position: absolute;
-    right:1%;
-  }
-  
+    top: 0px;
+    right: 0px;
+}
 
-/* Style the topnav links */
-
-  .toptab{
-    background-color:aliceblue;
+.toptab{
+    background-color:lightgrey;
     display: flex;
-    
-  }
+}
 
-  .tablinks {
+.toptab button.active{
+    background-color:dimgray;
+    color:rgb(85, 187, 182);
+    border-top: 1px solid black;
+    border-left: 1px solid black;
+    border-right: 1px solid black;
+    border-bottom:none;
+}
+
+.tablinks {
     float: left;
     display: block;
     color:black;
@@ -39,65 +43,63 @@ body {
     background-color:inherit;
     border:none;
     font-weight: bold;
-  }
+}
 
-  .tablinks:hover {
-    background-color: whitesmoke;
-    color:darkcyan;
+.tablinks:hover {
+    background-color:dimgray;
+    color:rgb(85, 187, 182);
     border-top: 1px solid black;
     border-left: 1px solid black;
     border-right: 1px solid black;
     border-bottom:none;
-  }
+}
 
-  .toptab button.active{
-      background-color: whitesmoke;
-      color:darkcyan;
-      border-bottom:none;
-      border-top-style: solid;
-      border-left-style: solid;
-      border-right-style: solid;
-  }
-
-  .tabcontent {
+.tabcontent {
     text-align: center;
     display: none;
+    padding: 20px;
   }
 
 
-/* Style the tables*/
 
-.TableSum {
-  border: 3px solid;
-  border-spacing:0 ;
 
-}
-  .TableSum td{
-    border: 1px solid;
-    border-spacing:0 ;
-    padding: 3px 3px;
-    border-left: none;
-    border-right:1px dotted;
-    border-bottom: none;
 
+  thead, tfoot {
+    background-color: #2c5e77;
+    color: #fff;
+  }
+  
+  tbody {
+    background-color: #e4f0f5;
+  }
+  
+  table {
+    border-collapse: collapse;
+    border: 2px solid rgb(140 140 140);
+    font-family: sans-serif;
+    font-size: 0.8rem;
+    letter-spacing: 1px;
   }
 
-  .TableSum th{
+  th, td {
+    border: 1px solid rgb(160 160 160);
+    padding: 8px 10px;
+    text-align: center;
+  }
+  
+  #myChart{
+    width:100%;
+    max-width:600px;
+    background-color:white;
+  
+  }
+
+
+  .footer {
     
-    border-spacing:0 ;
-    padding: 3px 3px;
-    border-left: none;
-    border-right:1px dotted;
-    border-bottom: none;
+    background-color: inherit;
+    color: greenyellow;
+    bottom: 0;
+    font-size: 8px;
+    text-align: center;
   }
-
-  #TblProjections tr:last-child {
-    font-weight: bold;
-  }
-/* this should be a class */
-  #TblMatuarityMeas tr:last-child {
-    font-weight: bold;
-  }
-
-
- 
