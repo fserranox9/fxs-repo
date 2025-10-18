@@ -1,33 +1,48 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Welcome to My Website</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      padding-top: 50px;
-      background: linear-gradient(to right, #0077ff, #00d4ff);
-      color: white;
-    }
-    h1 {
-      font-size: 2.5em;
-    }
-    p {
-      font-size: 1.2em;
-    }
-    footer {
-      margin-top: 50px;
-      font-size: 0.9em;
-      opacity: 0.8;
-    }
-  </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Personal Website</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <h1>Hello, World! 👋</h1>
-  <p>Welcome to my very first website hosted on <b>GitHub Pages</b>.</p>
-  <footer>© 2025 Your Name | Built with ❤️ using GitHub Pages</footer>
+  <header>
+    <h1>Welcome to My Website 👋</h1>
+    <nav>
+      <a href="#recipes">Mom’s Recipes</a>
+      <a href="#projects">My Coding Projects</a>
+    </nav>
+  </header>
+
+  <main>
+    <section id="intro">
+      <h2>About This Site</h2>
+      <p>
+        This is my personal space on the web — a place to share things I love,
+        from my mom’s best recipes to the coding projects I’m working on.
+      </p>
+    </section>
+
+    <section id="recipes">
+      <h2>🍳 Mom’s Recipes</h2>
+      <p>Coming soon: homemade dishes, kitchen secrets, and comfort food ideas.</p>
+    </section>
+
+    <section id="projects">
+      <h2>💻 My Coding Projects</h2>
+      <ul>
+        <li>Portfolio Website</li>
+        <li>Pokémon Card App</li>
+        <li>Data Dashboard Demo</li>
+      </ul>
+    </section>
+  </main>
+
+  <footer>
+    <p>© 2025 Your Name | Built with ❤️ using GitHub Pages</p>
+  </footer>
+
+  <script src="script.js"></script>
 </body>
 </html>
