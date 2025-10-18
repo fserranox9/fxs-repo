@@ -1,0 +1,55 @@
+/* === Global Styles === */
+body {
+  font-family: "Segoe UI", Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  line-height: 1.6;
+  color: #222;
+  background-color: #fdfdfd;
+}
+
+/* === Header === */
+header {
+  background: linear-gradient(90deg, #0077ff, #00c6ff);
+  color: white;
+  text-align: center;
+  padding: 2rem 1rem;
+}
+
+nav a {
+  color: white;
+  text-decoration: none;
+  margin: 0 10px;
+  font-weight: bold;
+}
+
+nav a:hover {
+  text-decoration: underline;
+}
+
+/* === Main Sections === */
+main {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+section {
+  margin-bottom: 3rem;
+}
+
+h2 {
+  border-bottom: 2px solid #00aaff;
+  padding-bottom: 5px;
+  margin-bottom: 1rem;
+  color: #004466;
+}
+
+/* === Footer === */
+footer {
+  text-align: center;
+  padding: 1.5rem;
+  background: #f0f0f0;
+  font-size: 0.9em;
+  color: #555;
+}
