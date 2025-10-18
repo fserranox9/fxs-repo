@@ -1,3 +1,1 @@
-document.addEventListener("DOMContentLoaded", () => {
-  console.log("Website loaded successfully!");
-});
+console.log("Mom’s Recipe Book loaded successfully!");

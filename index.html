@@ -3,44 +3,57 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>My Personal Website</title>
+  <title>Cuca’s Recipe Book</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+  <!-- Header -->
   <header>
-    <h1>Welcome to My Website 👋</h1>
-    <nav>
-      <a href="#recipes">Mom’s Recipes</a>
-      <a href="#projects">My Coding Projects</a>
-    </nav>
+    <img src="images/mom.jpg" alt="Photo of Mom" class="mom-photo" />
+    <h1>🌮 Cuca’s Recipe Book 🇲🇽</h1>
+    <p class="subtitle">Un chingo de simple homemade meals made in la cocina ❤️</p>
   </header>
 
+  <!-- Navigation -->
+  <nav>
+    <ul>
+      <li><a href="#">🏠 Casa</a></li>
+      <li><a href="#">🍳 Recipes</a></li>
+      <li><a href="#">👩‍🍳 About Cuca</a></li>
+      <li><a href="#">📬 Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- Main Content -->
   <main>
-    <section id="intro">
-      <h2>About This Site</h2>
-      <p>
-        This is my personal space on the web — a place to share things I love,
-        from my mom’s best recipes to the coding projects I’m working on.
-      </p>
-    </section>
+    <h2>✨ Featured Recipes ✨</h2>
+    <div class="recipe-grid">
+      <div class="recipe-card">
+        <img src="images/adobo.jpg" alt="Chicken Adobo" />
+        <h3>Pollo en Adobo</h3>
+        <p>A rich, smoky blend of chiles, vinegar, and love — one of Cuca’s favorites.</p>
+        <a href="#" class="btn">View Recipe</a>
+      </div>
 
-    <section id="recipes">
-      <h2>🍳 Mom’s Recipes</h2>
-      <p>Coming soon: homemade dishes, kitchen secrets, and comfort food ideas.</p>
-    </section>
+      <div class="recipe-card">
+        <img src="images/tacos.jpg" alt="Tacos de Asada" />
+        <h3>Tacos de Asada</h3>
+        <p>Juicy carne asada, freshly chopped cilantro, and lime — a backyard staple.</p>
+        <a href="#" class="btn">View Recipe</a>
+      </div>
 
-    <section id="projects">
-      <h2>💻 My Coding Projects</h2>
-      <ul>
-        <li>Portfolio Website</li>
-        <li>Pokémon Card App</li>
-        <li>Data Dashboard Demo</li>
-      </ul>
-    </section>
+      <div class="recipe-card">
+        <img src="images/cookies.jpg" alt="Cookies" />
+        <h3>Galletas de Chocolate</h3>
+        <p>Soft and chewy cookies that taste like Sunday mornings at home.</p>
+        <a href="#" class="btn">View Recipe</a>
+      </div>
+    </div>
   </main>
 
+  <!-- Footer -->
   <footer>
-    <p>© 2025 Your Name | Built with ❤️ using GitHub Pages</p>
+    <p>© 2025 Cuca’s Recipe Book | Hecho con ❤️ y sazón Mexicano-Americano</p>
   </footer>
 
   <script src="script.js"></script>
