@@ -7,6 +7,17 @@ const adobo = {
   id: "pollo-en-adobo",
   cookId: cuca.id,
   title: "Pollo en Adobo",
+  description: "Ahumado, con un toque ácido y mucho sabor. El plato de los domingos en familia.",
+  ingredients: ["2 libras de pollo en piezas", "3 chiles guajillos secos", "2 dientes de ajo", "½ taza de vinagre", "1 cucharadita de orégano y sal al gusto"],
+  steps: [
+    "Tuesta los chiles y remójalos hasta que se suavicen.",
+    "Licúa los chiles, el ajo y el vinagre para hacer el adobo.",
+    "Marina el pollo en el adobo durante 2 horas.",
+    "Cocina a fuego lento hasta que esté tierno. Sirve con arroz y tortillas."
+  ],
+  story: ""
+};
+const adoboEnglish = {
   description: "Smoky, tangy, and rich — the heart of every family Sunday.",
   ingredients: ["2 lbs chicken pieces", "3 dried guajillo chiles", "2 cloves garlic", "½ cup vinegar", "1 tsp oregano, salt to taste"],
   steps: [
@@ -14,12 +25,11 @@ const adobo = {
     "Blend chiles, garlic, and vinegar to make adobo sauce.",
     "Marinate chicken in sauce for 2 hours.",
     "Simmer until tender — serve with rice and tortillas."
-  ],
-  story: ""
+  ]
 };
 const recipeIdeas = [
-  { id: "asada", title: "Tacos de Asada", description: "Juicy carne asada tacos with lime and cilantro." },
-  { id: "galletas", title: "Galletas de Chocolate", description: "Soft, sweet, and perfectly chewy — just like Mom used to make." }
+  { id: "asada", title: "Tacos de Asada", description: "Tacos de carne asada con limón y cilantro." },
+  { id: "galletas", title: "Galletas de Chocolate", description: "Suavecitas y dulces, como las hacía mamá." }
 ];
 
 const $ = (selector) => document.querySelector(selector);
@@ -32,6 +42,8 @@ const readerContent = $("#recipe-content");
 const grid = $("#recipe-grid");
 const search = $("#recipe-search");
 const filter = $("#favorite-filter");
+const featureLink = $("#featured-link");
+const deleteDialog = $("#recipe-delete");
 const treeChart = $("#tree-chart");
 const treeCanvas = $("#tree-lines");
 let book = emptyBook();
@@ -43,6 +55,20 @@ let cookStep = null;
 let checkedIngredients = new Set();
 let favoritesOnly = false;
 let noticeTimer;
+const recipePhoto = photoPicker("recipe", false, (photo) => {
+  const preview = $("#recipe-photo-preview");
+  preview.hidden = !photo;
+  if (photo) preview.src = photo;
+  else preview.removeAttribute("src");
+});
+const cookPhoto = photoPicker("cook", true, (photo) => {
+  const person = book.cooks.find((cook) => cook.id === editingCookId);
+  $("#cook-photo-preview").replaceChildren(profileAvatar({
+    id: person?.id,
+    name: person?.name ?? cookForm.elements.name.value,
+    photo
+  }));
+});
 
 function emptyBook() {
   return { activeCookId: cuca.id, cooks: [{ ...cuca }], recipes: [] };
@@ -53,11 +79,25 @@ function currentCook() {
 }
 
 function getRecipe(id) {
+  if (id === adobo.id && book.hideAdobo) return undefined;
   return book.recipes.find((recipe) => recipe.id === id) ?? (id === adobo.id ? adobo : undefined);
 }
 
+function featuredRecipe() {
+  return getRecipe(adobo.id) ?? book.recipes.find((recipe) => recipe.photo);
+}
+
+function recipeTranslations(recipe) {
+  if (recipe.id !== adobo.id) return {};
+  return {
+    description: recipe.description === adobo.description ? adoboEnglish.description : "",
+    ingredients: recipe.ingredients.map((item) => adoboEnglish.ingredients[adobo.ingredients.indexOf(item)]),
+    steps: recipe.steps.map((item) => adoboEnglish.steps[adobo.steps.indexOf(item)])
+  };
+}
+
 function cookName(id) {
-  return book.cooks.find((cook) => cook.id === id)?.name ?? "Family cook";
+  return book.cooks.find((cook) => cook.id === id)?.name ?? "Familia";
 }
 
 function element(tag, className, text) {
@@ -65,6 +105,102 @@ function element(tag, className, text) {
   if (className) node.className = className;
   if (text !== undefined) node.textContent = text;
   return node;
+}
+
+function english(text) {
+  const caption = element("span", "translation", text);
+  caption.lang = "en";
+  return caption;
+}
+
+function profileAvatar(person) {
+  const source = person.photo || (person.id === cuca.id ? "mom.jpg" : "");
+  if (source) {
+    const picture = element("img", "profile-avatar");
+    picture.src = source;
+    picture.alt = "";
+    return picture;
+  }
+  const initial = Array.from(person.name.trim())[0]?.toLocaleUpperCase("es") ?? "?";
+  const avatar = element("span", "profile-avatar", initial);
+  avatar.setAttribute("aria-hidden", "true");
+  return avatar;
+}
+
+function photoPicker(kind, avatar, preview) {
+  const library = $(`#${kind}-photo-files`);
+  const camera = $(`#${kind}-photo-camera`);
+  const remove = $(`#${kind}-photo-remove`);
+  const save = $(`#save-${kind}`);
+  let photo = null;
+  let selection = 0;
+
+  function reset(value) {
+    selection++;
+    photo = value ?? null;
+    library.value = "";
+    camera.value = "";
+    save.disabled = false;
+    remove.hidden = !photo;
+    preview(photo);
+  }
+
+  async function select(event) {
+    const [file] = event.currentTarget.files;
+    if (!file) return;
+    const current = ++selection;
+    save.disabled = true;
+    formError(`#${kind}-error`);
+    try {
+      const prepared = await preparePhoto(file, avatar);
+      if (current === selection) reset(prepared);
+    } catch {
+      if (current !== selection) return;
+      reset(photo);
+      formError(`#${kind}-error`, "No pudimos abrir la foto. Elige una imagen compatible (JPG, PNG o WebP) de hasta 12 MB.");
+    }
+  }
+
+  $(`#${kind}-photo-choose`).addEventListener("click", () => library.click());
+  $(`#${kind}-photo-capture`).addEventListener("click", () => camera.click());
+  library.addEventListener("change", select);
+  camera.addEventListener("change", select);
+  remove.addEventListener("click", () => {
+    reset(null);
+    $(`#${kind}-photo-choose`).focus();
+  });
+  const dialog = library.closest("dialog");
+  dialog.addEventListener("close", () => { if (!dialog.open) selection++; });
+  return { reset, value: () => photo, refresh: () => preview(photo) };
+}
+
+async function preparePhoto(file, avatar) {
+  if (file.size > 12_000_000) throw new Error("Photo too large");
+  const source = URL.createObjectURL(file);
+  try {
+    const photo = new Image();
+    photo.src = source;
+    await photo.decode();
+    const { naturalWidth: width, naturalHeight: height } = photo;
+    const shortest = Math.min(width, height);
+    const crop = avatar
+      ? [(width - shortest) / 2, (height - shortest) / 2, shortest, shortest]
+      : [0, 0, width, height];
+    const ratio = avatar ? 160 / shortest : Math.min(1, 960 / width, 800 / height);
+    const canvas = element("canvas");
+    canvas.width = Math.max(1, Math.round(crop[2] * ratio));
+    canvas.height = Math.max(1, Math.round(crop[3] * ratio));
+    const context = canvas.getContext("2d");
+    context.fillStyle = "#fff";
+    context.fillRect(0, 0, canvas.width, canvas.height);
+    context.drawImage(photo, ...crop, 0, 0, canvas.width, canvas.height);
+    let saved = canvas.toDataURL("image/jpeg", .8);
+    if (!avatar && saved.length > 300_000) saved = canvas.toDataURL("image/jpeg", .6);
+    if (!isPhoto(saved, avatar ? 85_000 : 400_000)) throw new Error("Photo exceeds storage limit");
+    return saved;
+  } finally {
+    URL.revokeObjectURL(source);
+  }
 }
 
 function button(className, text, action) {
@@ -92,7 +228,7 @@ function saveBook(next, onError = showNotice) {
   try {
     localStorage.setItem(storageKey, JSON.stringify(next));
   } catch {
-    onError("This browser couldn’t save the cookbook. Check its storage settings or available space.");
+    onError("El navegador no pudo guardar el recetario. Revisa la configuración o el espacio disponible.");
     return false;
   }
   book = next;
@@ -105,16 +241,30 @@ function normalized(text) {
 }
 
 function render() {
-  $("#featured-title").textContent = getRecipe(adobo.id).title;
+  const featured = featuredRecipe();
+  featureLink.closest("figure").hidden = !featured;
+  if (featured) {
+    const original = featured.id === adobo.id;
+    const image = featureLink.querySelector("img");
+    const source = featured.photo ?? "recipes/adobo/adobo.jpg";
+    if (image.getAttribute("src") !== source) image.src = source;
+    image.alt = original && !featured.photo
+      ? "Pollo en adobo de chile guajillo en un sartén de hierro"
+      : `Foto de ${featured.title}`;
+    featureLink.href = original ? "recipes/adobo/index.html" : "#recipes";
+    $("#featured-title").textContent = featured.title;
+    $("#featured-kicker").textContent = original ? "El plato de Cuca" : "Del recetario familiar";
+  }
   renderRecipes();
   const cooks = book.cooks.map((cook) => {
     const chip = button("button button-outline button-small cook-chip", cook.name, () => {
       if (cook.id === book.activeCookId) return;
       if (saveBook({ ...book, activeCookId: cook.id })) {
         document.getElementById(`cook-${cook.id}`).focus();
-        showNotice(`Cooking as ${cook.name}.`);
+        showNotice(`Perfil activo: ${cook.name}.`);
       }
     });
+    chip.prepend(profileAvatar(cook));
     chip.id = `cook-${cook.id}`;
     chip.setAttribute("aria-pressed", String(cook.id === book.activeCookId));
     return chip;
@@ -156,15 +306,17 @@ function renderTree() {
     const depth = depths.get(cook.id);
     generations[depth] ??= element("div", "tree-generation");
     generations[depth].setAttribute("role", "group");
-    generations[depth].setAttribute("aria-label", `Generation ${depth + 1}`);
+    generations[depth].setAttribute("aria-label", `Generación ${depth + 1}`);
 
     const person = element("article", "tree-person");
     person.id = `tree-person-${cook.id}`;
     const parents = (cook.parentIds ?? []).map(cookName);
-    const edit = button("text-link", "Edit placement", () => openCookEditor(cook));
-    edit.setAttribute("aria-label", `Edit placement for ${cook.name}`);
-    person.append(element("h3", "", cook.name));
-    if (parents.length) person.append(element("p", "", `Child of ${parents.join(" and ")}`));
+    const edit = button("text-link", "Editar perfil", () => openCookEditor(cook));
+    edit.setAttribute("aria-label", `Editar el perfil y lugar de ${cook.name}`);
+    const heading = element("div", "tree-person-heading");
+    heading.append(profileAvatar(cook), element("h3", "", cook.name));
+    person.append(heading);
+    if (parents.length) person.append(element("p", "", `Padres o tutores: ${parents.join(" y ")}`));
     person.append(edit);
     generations[depth].append(person);
   }
@@ -212,9 +364,12 @@ function renderRecipes() {
     return terms.every((term) => haystack.includes(term));
   };
   const favorites = currentCook().favorites;
-  const recipes = [getRecipe(adobo.id), ...book.recipes.filter((recipe) => recipe.id !== adobo.id)].filter((recipe) => {
+  const original = getRecipe(adobo.id);
+  const available = [...(original ? [original] : []), ...book.recipes.filter((recipe) => recipe.id !== adobo.id)];
+  const recipes = available.filter((recipe) => {
     return (!favoritesOnly || favorites.includes(recipe.id)) &&
-      matches([recipe.title, recipe.description, cookName(recipe.cookId), ...recipe.ingredients]);
+      matches([recipe.title, recipe.description, cookName(recipe.cookId), ...recipe.ingredients,
+        ...(recipeTranslations(recipe).ingredients ?? [])]);
   });
   const ideas = favoritesOnly ? [] : recipeIdeas.filter((idea) =>
     !book.recipes.some((recipe) => recipe.ideaId === idea.id || normalized(recipe.title) === normalized(idea.title)) &&
@@ -222,18 +377,26 @@ function renderRecipes() {
   );
   grid.replaceChildren(...recipes.map(recipeCard), ...ideas.map(ideaCard));
   const empty = $("#recipe-empty");
-  empty.textContent = terms.length ? "No recipes match your search." : "No favorites yet. Save a recipe with the heart button.";
+  empty.textContent = terms.length ? "No encontramos recetas que coincidan con tu búsqueda."
+    : favoritesOnly ? "Todavía no hay favoritas. Toca el corazón de una receta para guardarla." : "Todavía no hay recetas.";
   empty.hidden = Boolean(grid.children.length);
 }
 
 function recipeCard(recipe) {
   const card = element("article", "recipe-card");
   const actions = element("div", "card-actions");
-  const open = button("text-link", "View recipe", () => openRecipe(recipe.id));
+  const open = button("text-link", "Ver receta", () => openRecipe(recipe.id));
   open.id = `open-${recipe.id}`;
-  open.setAttribute("aria-label", `View recipe for ${recipe.title}`);
+  open.setAttribute("aria-label", `Ver la receta de ${recipe.title}`);
   actions.append(open, favoriteButton(recipe, false));
-  card.append(element("p", "card-meta", `By ${cookName(recipe.cookId)}`), element("h3", "", recipe.title));
+  if (recipe.photo) {
+    const picture = element("img", "recipe-card-photo");
+    picture.src = recipe.photo;
+    picture.alt = "";
+    picture.loading = "lazy";
+    card.append(picture);
+  }
+  card.append(element("p", "card-meta", `De ${cookName(recipe.cookId)}`), element("h3", "", recipe.title));
   if (recipe.description) card.append(element("p", "", recipe.description));
   card.append(actions);
   return card;
@@ -242,11 +405,11 @@ function recipeCard(recipe) {
 function ideaCard(idea) {
   const card = element("article", "recipe-card pending");
   const actions = element("div", "card-actions");
-  const record = button("text-link", "Add the family recipe", () => openEditor(undefined, idea));
+  const record = button("text-link", "Anotar la receta", () => openEditor(undefined, idea));
   record.id = `record-${idea.id}`;
-  record.setAttribute("aria-label", `Add the family recipe for ${idea.title}`);
+  record.setAttribute("aria-label", `Anotar la receta familiar de ${idea.title}`);
   actions.append(record);
-  card.append(element("p", "card-meta", "Recipe to record"), element("h3", "", idea.title), element("p", "", idea.description), actions);
+  card.append(element("p", "card-meta", "Receta por anotar"), element("h3", "", idea.title), element("p", "", idea.description), actions);
   return card;
 }
 
@@ -262,7 +425,7 @@ function favoriteButton(recipe, inReader) {
     (document.getElementById(id) ?? filter).focus();
   });
   toggle.id = id;
-  toggle.setAttribute("aria-label", `Favorite ${recipe.title} for ${cook.name}`);
+  toggle.setAttribute("aria-label", `Marcar ${recipe.title} como favorita de ${cook.name}`);
   toggle.setAttribute("aria-pressed", String(saved));
   return toggle;
 }
@@ -271,8 +434,9 @@ function openEditor(recipe, idea) {
   recipeForm.reset();
   editingId = recipe?.id ?? null;
   recipeIdeaId = recipe?.ideaId ?? idea?.id ?? null;
-  $("#editor-title").textContent = recipe ? "Edit recipe" : "Add a recipe";
+  $("#editor-title").textContent = recipe ? "Editar receta" : "Agregar receta";
   formError("#recipe-error");
+  recipePhoto.reset(recipe?.photo);
 
   const fields = recipeForm.elements;
   fields.cookId.replaceChildren(...book.cooks.map((cook) => new Option(cook.name, cook.id)));
@@ -292,6 +456,11 @@ function lines(text) {
 
 function saveRecipe(event) {
   event.preventDefault();
+  if ($("#save-recipe").disabled) return;
+  if (editingId && !getRecipe(editingId)) {
+    formError("#recipe-error", "La receta se eliminó en otra pestaña. Cierra el formulario para actualizar la vista.");
+    return;
+  }
   const data = new FormData(recipeForm);
   const recipe = {
     id: editingId ?? `recipe-${crypto.randomUUID()}`,
@@ -301,14 +470,15 @@ function saveRecipe(event) {
     ingredients: lines(data.get("ingredients")),
     steps: lines(data.get("steps")),
     story: data.get("story").trim(),
-    ideaId: recipeIdeaId
+    ideaId: recipeIdeaId,
+    photo: recipePhoto.value()
   };
   if (!recipe.title || !recipe.ingredients.length || !recipe.steps.length) {
-    formError("#recipe-error", "Enter a recipe name, at least one ingredient, and at least one step.");
+    formError("#recipe-error", "Escribe el nombre de la receta, al menos un ingrediente y un paso.");
     return;
   }
   if (!book.cooks.some((cook) => cook.id === recipe.cookId)) {
-    formError("#recipe-error", "Choose a cook to credit for this recipe.");
+    formError("#recipe-error", "Elige a la persona que aportó esta receta.");
     return;
   }
   const recipes = book.recipes.some((existing) => existing.id === recipe.id)
@@ -322,9 +492,10 @@ function saveRecipe(event) {
 function openCookEditor(cook) {
   cookForm.reset();
   editingCookId = cook?.id ?? null;
-  $("#cook-editor-title").textContent = cook ? `Place ${cook.name} in the tree` : "Add a family cook";
-  $("#save-cook").textContent = cook ? "Save placement" : "Add cook";
+  $("#cook-editor-title").textContent = cook ? `Lugar de ${cook.name} en el árbol` : "Agregar a la familia";
+  $("#save-cook").textContent = cook ? "Guardar lugar" : "Agregar persona";
   formError("#cook-error");
+  cookPhoto.reset(cook?.photo);
 
   const fields = cookForm.elements;
   $("#cook-name-field").hidden = Boolean(cook);
@@ -332,7 +503,7 @@ function openCookEditor(cook) {
   fields.name.disabled = Boolean(cook);
   const relatives = book.cooks.filter((person) => person.id !== editingCookId);
   for (const field of [fields.parent, fields.secondParent, fields.child]) {
-    const blank = field === fields.child ? "Choose a child" : "None selected";
+    const blank = field === fields.child ? "Elige un hijo o una hija" : "Sin seleccionar";
     field.replaceChildren(new Option(blank, ""), ...relatives.map((person) => new Option(person.name, person.id)));
   }
   fields.parent.value = cook?.parentIds?.[0] ?? "";
@@ -358,55 +529,57 @@ function updatePlacementFields() {
 
 function saveCook(event) {
   event.preventDefault();
+  if ($("#save-cook").disabled) return;
   const data = new FormData(cookForm);
   const parentIds = [data.get("parent"), data.get("secondParent")].filter(Boolean);
   if (new Set(parentIds).size !== parentIds.length) {
-    formError("#cook-error", "Choose a different person for each parent or guardian.");
+    formError("#cook-error", "Elige a dos personas distintas.");
     return;
   }
   if (parentIds.some((id) => !book.cooks.some((person) => person.id === id))) {
-    formError("#cook-error", "The cookbook changed in another tab. Reopen this form to choose a parent or guardian.");
+    formError("#cook-error", "El recetario cambió en otra pestaña. Abre el formulario de nuevo para elegir a la persona.");
     return;
   }
 
   if (editingCookId) {
     if (!book.cooks.some((person) => person.id === editingCookId)) {
-      formError("#cook-error", "This cook is no longer in the cookbook. Close the form to refresh your view.");
+      formError("#cook-error", "Este perfil ya no está en el recetario. Cierra el formulario para actualizar la vista.");
       return;
     }
-    const cooks = book.cooks.map((person) => person.id === editingCookId ? { ...person, parentIds } : person);
+    const cooks = book.cooks.map((person) => person.id === editingCookId
+      ? { ...person, parentIds, photo: cookPhoto.value() } : person);
     if (!treeDepths(cooks)) {
-      formError("#cook-error", "That placement creates a loop. Choose someone outside this cook’s descendants.");
+      formError("#cook-error", "Este parentesco crea un ciclo. Elige a alguien que no descienda de esta persona.");
       return;
     }
     if (saveBook({ ...book, cooks }, (message) => formError("#cook-error", message))) {
       cookEditor.close();
       document.getElementById(`tree-person-${editingCookId}`).querySelector("button").focus();
-      showNotice("Family tree updated.");
+      showNotice("Se actualizó el perfil.");
     }
     return;
   }
 
   const name = data.get("name").trim();
   if (!name) {
-    formError("#cook-error", "Enter a name for the cook.");
+    formError("#cook-error", "Escribe el nombre de la persona.");
     return;
   }
   if (book.cooks.some((cook) => normalized(cook.name) === normalized(name))) {
-    formError("#cook-error", "There’s already a cook with that name. Use a nickname to tell them apart.");
+    formError("#cook-error", "Ya hay un perfil con ese nombre. Puedes usar un apodo para distinguirlos.");
     return;
   }
-  const cook = { id: `cook-${crypto.randomUUID()}`, name, favorites: [], parentIds };
+  const cook = { id: `cook-${crypto.randomUUID()}`, name, favorites: [], parentIds, photo: cookPhoto.value() };
   const childId = data.get("child");
   let relatives = book.cooks;
   if (childId) {
     const child = book.cooks.find((person) => person.id === childId);
     if (!child) {
-      formError("#cook-error", "The cookbook changed in another tab. Reopen this form to choose a child.");
+      formError("#cook-error", "El recetario cambió en otra pestaña. Abre el formulario de nuevo para elegir al hijo o hija.");
       return;
     }
     if ((child.parentIds ?? []).length >= 2) {
-      formError("#cook-error", `${child.name} already has two parents or guardians. Edit their placement to change one.`);
+      formError("#cook-error", `${child.name} ya tiene dos padres, madres o tutores registrados. Edita su lugar para cambiar uno.`);
       return;
     }
     const linkedChild = { ...child, parentIds: [...(child.parentIds ?? []), cook.id] };
@@ -415,7 +588,7 @@ function saveCook(event) {
   const next = { ...book, activeCookId: cook.id, cooks: [...relatives, cook] };
   if (!saveBook(next, (message) => formError("#cook-error", message))) return;
   cookEditor.close();
-  showNotice(`${name} has a place at the family table.`);
+  showNotice(`${name} ya tiene un lugar en la mesa.`);
 }
 
 function openRecipe(id) {
@@ -431,63 +604,84 @@ function openRecipe(id) {
   reader.querySelector("[data-close]").focus({ preventScroll: true });
 }
 
-function recipeList(tag, heading, items) {
+function recipeList(tag, heading, items, translations = []) {
   const section = element("section");
   const list = element(tag);
-  list.append(...items.map((item) => element("li", "", item)));
+  list.append(...items.map((item, index) => {
+    const line = element("li", "", item);
+    if (translations[index]) line.append(english(translations[index]));
+    return line;
+  }));
   section.append(element("h3", "", heading), list);
   return section;
 }
 
 function renderReader(recipe) {
-  const attribution = element("p", "card-meta", `By ${cookName(recipe.cookId)}`);
+  const translated = recipeTranslations(recipe);
+  const attribution = element("p", "card-meta", `De ${cookName(recipe.cookId)}`);
   const actions = element("div", "reader-actions");
-  const start = button("button", "Start cooking", () => {
+  const start = button("button", "A cocinar", () => {
     cookStep = 0;
     renderCookMode(recipe);
   });
   start.id = "start-cooking";
   actions.append(start, favoriteButton(recipe, true));
-  actions.append(button("button button-outline", "Edit recipe", () => openEditor(recipe)));
+  actions.append(button("button button-outline", "Editar receta", () => openEditor(recipe)));
+  actions.append(button("button button-outline", "Eliminar", () => {
+    $("#delete-message").textContent = `¿Eliminar «${recipe.title}» del recetario de este navegador?`;
+    deleteDialog.showModal();
+  }));
 
   const details = element("div", "reader-body");
-  details.append(recipeList("ul", "Ingredients", recipe.ingredients), recipeList("ol", "Directions", recipe.steps));
+  details.append(recipeList("ul", "Ingredientes", recipe.ingredients, translated.ingredients),
+    recipeList("ol", "Preparación", recipe.steps, translated.steps));
   const contents = [attribution];
-  if (recipe.description) contents.push(element("p", "description", recipe.description));
+  if (recipe.description) {
+    const description = element("p", "description", recipe.description);
+    if (translated.description) description.append(english(translated.description));
+    contents.push(description);
+  }
+  if (recipe.photo) {
+    const picture = element("img", "reader-photo");
+    picture.src = recipe.photo;
+    picture.alt = `Foto de ${recipe.title}`;
+    contents.push(picture);
+  }
   contents.push(actions, details);
   if (recipe.story) {
     const story = element("section", "story");
-    story.append(element("h3", "", "From the family table"), element("p", "", recipe.story));
+    story.append(element("h3", "", "Historia familiar"), element("p", "", recipe.story));
     contents.push(story);
   }
   readerContent.replaceChildren(...contents);
 }
 
 function renderCookMode(recipe) {
-  const stepLabel = element("h3", "", `Step ${cookStep + 1} of ${recipe.steps.length}`);
+  const translated = recipeTranslations(recipe);
+  const stepLabel = element("h3", "", `Paso ${cookStep + 1} de ${recipe.steps.length}`);
   stepLabel.tabIndex = -1;
   const progress = element("progress", "cook-progress");
   progress.max = recipe.steps.length;
   progress.value = cookStep + 1;
-  progress.setAttribute("aria-label", "Cooking progress");
+  progress.setAttribute("aria-label", "Avance de la preparación");
   const actions = element("div", "reader-actions");
   const leave = () => {
     cookStep = null;
     renderReader(recipe);
     $("#start-cooking").focus();
   };
-  if (cookStep > 0) actions.append(button("button button-outline", "Previous step", () => {
+  if (cookStep > 0) actions.append(button("button button-outline", "Paso anterior", () => {
     cookStep--;
     renderCookMode(recipe);
   }));
   if (cookStep < recipe.steps.length - 1) {
-    actions.append(button("button", "Next step", () => {
+    actions.append(button("button", "Siguiente paso", () => {
       cookStep++;
       renderCookMode(recipe);
     }));
-    actions.append(button("button button-outline", "Back to recipe", leave));
+    actions.append(button("button button-outline", "Volver a la receta", leave));
   } else {
-    actions.append(button("button", "Finish cooking", leave));
+    actions.append(button("button", "Terminar", leave));
   }
 
   const checklist = element("ul", "ingredient-checklist");
@@ -501,11 +695,15 @@ function renderCookMode(recipe) {
       if (check.checked) checkedIngredients.add(index);
       else checkedIngredients.delete(index);
     });
-    label.append(check, element("span", "", ingredient));
+    const text = element("span", "", ingredient);
+    if (translated.ingredients?.[index]) text.append(english(translated.ingredients[index]));
+    label.append(check, text);
     item.append(label);
     return item;
   }));
-  readerContent.replaceChildren(stepLabel, progress, element("p", "cook-step", recipe.steps[cookStep]), actions, element("h3", "", "Ingredient checklist"), checklist);
+  const step = element("p", "cook-step", recipe.steps[cookStep]);
+  if (translated.steps?.[cookStep]) step.append(english(translated.steps[cookStep]));
+  readerContent.replaceChildren(stepLabel, progress, step, actions, element("h3", "", "Lista de ingredientes"), checklist);
   reader.scrollTop = 0;
   stepLabel.focus({ preventScroll: true });
 }
@@ -518,6 +716,11 @@ function isId(value) {
   return typeof value === "string" && /^[a-z\d-]{1,60}$/.test(value);
 }
 
+function isPhoto(value, maxLength) {
+  return typeof value === "string" && value.length <= maxLength &&
+    /^data:image\/jpeg;base64,[A-Za-z0-9+/]+={0,2}$/.test(value);
+}
+
 function isTextList(value, limit) {
   return Array.isArray(value) && value.length > 0 &&
     value.every((item) => isText(item, limit, true)) && value.join("\n").length <= limit;
@@ -525,10 +728,12 @@ function isTextList(value, limit) {
 
 function validateBook(data) {
   if (!data || !Array.isArray(data.cooks) || !Array.isArray(data.recipes)) return false;
+  if (data.hideAdobo !== undefined && typeof data.hideAdobo !== "boolean") return false;
   const cooks = new Set();
   for (const cook of data.cooks) {
     if (!cook || !isId(cook.id) || cooks.has(cook.id) || !isText(cook.name, 50, true) ||
         !Array.isArray(cook.favorites) || !cook.favorites.every(isId)) return false;
+    if (cook.photo != null && !isPhoto(cook.photo, 85_000)) return false;
     if (cook.parentIds !== undefined && (!Array.isArray(cook.parentIds) || cook.parentIds.length > 2 ||
         new Set(cook.parentIds).size !== cook.parentIds.length || !cook.parentIds.every(isId))) return false;
     cooks.add(cook.id);
@@ -540,9 +745,10 @@ function validateBook(data) {
         !isText(recipe.title, 80, true) || !isText(recipe.description, 180) || !isText(recipe.story, 1200) ||
         !isTextList(recipe.ingredients, 4000) || !isTextList(recipe.steps, 7000) ||
         (recipe.ideaId !== null && !recipeIdeas.some((idea) => idea.id === recipe.ideaId))) return false;
+    if ((data.hideAdobo && recipe.id === adobo.id) || (recipe.photo != null && !isPhoto(recipe.photo, 400_000))) return false;
     recipes.add(recipe.id);
   }
-  return data.cooks.every((cook) => cook.favorites.every((id) => recipes.has(id) || id === adobo.id));
+  return data.cooks.every((cook) => cook.favorites.every((id) => recipes.has(id) || (!data.hideAdobo && id === adobo.id)));
 }
 
 function exportBackup() {
@@ -556,11 +762,13 @@ function exportBackup() {
 }
 
 function mergeBackup(incoming) {
+  const hideAdobo = book.hideAdobo ?? incoming.hideAdobo;
   const cooks = new Map(book.cooks.map((cook) => [cook.id, cook]));
   incoming.cooks.forEach((cook) => {
     const existing = cooks.get(cook.id);
     cooks.set(cook.id, existing
-      ? { ...existing, favorites: [...new Set([...existing.favorites, ...cook.favorites])] }
+      ? { ...existing, photo: existing.photo === undefined ? cook.photo : existing.photo,
+        favorites: [...new Set([...existing.favorites, ...cook.favorites])] }
       : cook);
   });
   for (const cook of incoming.cooks) {
@@ -570,11 +778,30 @@ function mergeBackup(incoming) {
     if (!treeDepths([...cooks.values()])) cooks.set(cook.id, existing);
   }
   const existingRecipes = new Set(book.recipes.map((recipe) => recipe.id));
+  const recipes = [...book.recipes, ...incoming.recipes.filter((recipe) => !existingRecipes.has(recipe.id))];
   return {
     ...book,
-    cooks: [...cooks.values()],
-    recipes: [...book.recipes, ...incoming.recipes.filter((recipe) => !existingRecipes.has(recipe.id))]
+    hideAdobo,
+    cooks: [...cooks.values()].map((cook) => hideAdobo
+      ? { ...cook, favorites: cook.favorites.filter((id) => id !== adobo.id) } : cook),
+    recipes: hideAdobo ? recipes.filter((recipe) => recipe.id !== adobo.id) : recipes
   };
+}
+
+function deleteRecipe() {
+  const recipe = getRecipe(readingId);
+  if (!recipe) {
+    deleteDialog.close();
+    return;
+  }
+  const recipes = book.recipes.filter((item) => item.id !== recipe.id);
+  const cooks = book.cooks.map((cook) => ({ ...cook, favorites: cook.favorites.filter((id) => id !== recipe.id) }));
+  const hideAdobo = recipe.id === adobo.id ? true : book.hideAdobo;
+  if (!saveBook({ ...book, cooks, recipes, hideAdobo })) return;
+  deleteDialog.close();
+  reader.close();
+  search.focus();
+  showNotice("Se eliminó la receta.");
 }
 
 async function importBackup(event) {
@@ -590,12 +817,12 @@ async function importBackup(event) {
     }
     const merged = mergeBackup(data.book);
     if (!validateBook(merged)) {
-      showNotice("These family trees overlap in a way that can’t be merged.");
+      showNotice("Las relaciones de estos dos árboles no se pueden combinar.");
       return;
     }
-    if (saveBook(merged)) showNotice("Backup imported. Existing edits were kept.");
+    if (saveBook(merged)) showNotice("Se importó la copia y se conservaron tus cambios.");
   } catch {
-    showNotice("Couldn’t read this backup. Choose a cookbook backup JSON file under 8 MB.");
+    showNotice("No pudimos leer la copia. Elige un archivo JSON del recetario menor a 8 MB.");
   }
 }
 
@@ -609,7 +836,7 @@ function readStoredBook(value) {
 try {
   book = readStoredBook(localStorage.getItem(storageKey));
 } catch {
-  showNotice("This browser couldn’t load its saved cookbook. You can import a backup from the family table.");
+  showNotice("El navegador no pudo cargar el recetario guardado. Puedes importar una copia en La familia.");
 }
 
 document.querySelectorAll("[data-new-recipe]").forEach((trigger) => trigger.addEventListener("click", () => openEditor()));
@@ -618,13 +845,17 @@ recipeForm.addEventListener("submit", saveRecipe);
 cookForm.addEventListener("submit", saveCook);
 document.querySelectorAll("[data-new-cook]").forEach((trigger) => trigger.addEventListener("click", () => openCookEditor()));
 cookForm.elements.placement.addEventListener("change", updatePlacementFields);
+cookForm.elements.name.addEventListener("input", cookPhoto.refresh);
+$("#confirm-delete").addEventListener("click", deleteRecipe);
 $("#export-book").addEventListener("click", exportBackup);
 $("#import-book").addEventListener("click", () => $("#backup-file").click());
 $("#backup-file").addEventListener("change", importBackup);
-$("[data-open-adobo]").addEventListener("click", (event) => {
+featureLink.addEventListener("click", (event) => {
   if (event.ctrlKey || event.metaKey || event.altKey || event.shiftKey) return;
+  const recipe = featuredRecipe();
+  if (!recipe) return;
   event.preventDefault();
-  openRecipe(adobo.id);
+  openRecipe(recipe.id);
 });
 search.addEventListener("input", renderRecipes);
 filter.addEventListener("click", () => {
@@ -639,11 +870,14 @@ window.addEventListener("storage", (event) => {
     render();
     if (reader.open) {
       const recipe = getRecipe(readingId);
-      if (!recipe) reader.close();
+      if (!recipe) {
+        deleteDialog.close();
+        reader.close();
+      }
       else if (cookStep === null) renderReader(recipe);
     }
   } catch {
-    showNotice("Couldn’t read cookbook changes from another tab.");
+    showNotice("No pudimos leer los cambios hechos en otra pestaña.");
   }
 });
 
